@@ -3,6 +3,8 @@ const std = @import("std");
 pub const puzzles = struct {
     pub const @"2023-1" = @import("2023/1.zig");
     pub const @"2023-1-2" = @import("2023/1p2.zig");
+    pub const @"2023-2" = @import("2023/2.zig");
+    pub const @"2023-2-2" = @import("2023/2p2.zig");
 };
 
 pub fn main() !void {
@@ -22,8 +24,6 @@ pub fn main() !void {
         const file = try std.fs.cwd().openFile(path, .{});
         break :blk file.reader();
     };
-
-    std.debug.print("Chosen puzzle: {s}\n", .{puzzle_name});
 
     inline for (@typeInfo(puzzles).Struct.decls) |puzzle_decl| {
         if (std.mem.eql(u8, puzzle_decl.name, puzzle_name)) {

@@ -1,0 +1,43 @@
+const std = @import("std");
+
+pub fn solve(input: std.fs.File.Reader, ally: std.mem.Allocator) !void {
+    var sum: u32 = 0;
+    var game_id: u32 = 1;
+    while (try input.readUntilDelimiterOrEofAlloc(ally, '\n', 256)) |line| {
+        var game_is_valid = true;
+
+        var color_count_it = std.mem.tokenizeAny(u8, line, ":,;");
+        _ = color_count_it.next();
+
+        while (color_count_it.next()) |color_count| {
+            var color_count_elem_it = std.mem.tokenizeScalar(u8, color_count, ' ');
+            const count = color_count_elem_it.next() orelse return error.InvalidInput;
+            const color = color_count_elem_it.next() orelse return error.InvalidInput;
+
+            const max_count: u32 = blk: {
+                if (std.mem.eql(u8, color, "red")) {
+                    break :blk 12;
+                } else if (std.mem.eql(u8, color, "green")) {
+                    break :blk 13;
+                } else if (std.mem.eql(u8, color, "blue")) {
+                    break :blk 14;
+                } else {
+                    return error.InvalidInput;
+                }
+            };
+
+            if (try std.fmt.parseInt(u32, count, 10) > max_count) {
+                game_is_valid = false;
+                break;
+            }
+        }
+
+        if (game_is_valid) {
+            sum += game_id;
+        }
+
+        game_id += 1;
+    }
+
+    std.debug.print("{}", .{sum});
+}
