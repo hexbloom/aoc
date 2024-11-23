@@ -7,10 +7,12 @@ pub const solutions = struct {
 };
 
 pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
 
-    var args = try std.process.argsWithAllocator(gpa.allocator());
+    const ally = arena.allocator();
+
+    var args = try std.process.argsWithAllocator(ally);
     defer args.deinit();
 
     _ = args.skip();
@@ -32,8 +34,7 @@ pub fn main() !void {
             inline for (@typeInfo(year_solutions).Struct.decls) |problem_decl| {
                 if (std.mem.eql(u8, problem_decl.name, problem)) {
                     const problem_solution = @field(year_solutions, problem_decl.name);
-                    const solution_output = try problem_solution.solve(input);
-                    std.debug.print("Solution: {s}", .{solution_output});
+                    try problem_solution.solve(input, ally);
                     return;
                 }
             }
