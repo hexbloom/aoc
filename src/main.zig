@@ -1,10 +1,8 @@
 const std = @import("std");
 
-pub const solutions = struct {
-    pub const @"2023" = struct {
-        pub const @"1" = @import("2023/1.zig");
-        pub const @"1p2" = @import("2023/1p2.zig");
-    };
+pub const puzzles = struct {
+    pub const @"2023-1" = @import("2023/1.zig");
+    pub const @"2023-1-2" = @import("2023/1p2.zig");
 };
 
 pub fn main() !void {
@@ -18,27 +16,20 @@ pub fn main() !void {
 
     _ = args.skip();
 
-    const year = args.next() orelse return error.InvalidArgs;
-    const problem = args.next() orelse return error.InvalidArgs;
-    const input = blk: {
+    const puzzle_name = args.next() orelse return error.InvalidArgs;
+    const puzzle_input = blk: {
         const path = args.next() orelse return error.InvalidArgs;
         const file = try std.fs.cwd().openFile(path, .{});
         break :blk file.reader();
     };
 
-    std.debug.print("Chosen year: {s}\n", .{year});
-    std.debug.print("Chosen problem: {s}\n", .{problem});
+    std.debug.print("Chosen puzzle: {s}\n", .{puzzle_name});
 
-    inline for (@typeInfo(solutions).Struct.decls) |year_decl| {
-        if (std.mem.eql(u8, year_decl.name, year)) {
-            const year_solutions = @field(solutions, year_decl.name);
-            inline for (@typeInfo(year_solutions).Struct.decls) |problem_decl| {
-                if (std.mem.eql(u8, problem_decl.name, problem)) {
-                    const problem_solution = @field(year_solutions, problem_decl.name);
-                    try problem_solution.solve(input, ally);
-                    return;
-                }
-            }
+    inline for (@typeInfo(puzzles).Struct.decls) |puzzle_decl| {
+        if (std.mem.eql(u8, puzzle_decl.name, puzzle_name)) {
+            const puzzle = @field(puzzles, puzzle_decl.name);
+            try puzzle.solve(puzzle_input, ally);
+            return;
         }
     }
     return error.NoSolutionImplemented;
