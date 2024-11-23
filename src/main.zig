@@ -3,6 +3,7 @@ const std = @import("std");
 pub const solutions = struct {
     pub const @"2023" = struct {
         pub const @"1" = @import("2023/1.zig");
+        pub const @"1p2" = @import("2023/1p2.zig");
     };
 };
 
