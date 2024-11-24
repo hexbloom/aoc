@@ -1,6 +1,5 @@
 const std = @import("std");
 const Context = @import("../Context.zig");
-const String = @import("../String.zig");
 
 pub fn solve(ctx: Context) !void {
     var sum: u32 = 0;

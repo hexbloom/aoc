@@ -1,6 +1,6 @@
 const std = @import("std");
 const Context = @import("../Context.zig");
-const String = @import("../String.zig");
+const String = std.ArrayList(u8);
 
 pub fn solve(ctx: Context) !void {
     var sum: i32 = 0;
@@ -9,19 +9,19 @@ pub fn solve(ctx: Context) !void {
         var str = String.init(ctx.ally);
         for (0..line.len) |i| {
             if (getDigit(line, i)) |char| {
-                if (str.len() < 2) {
-                    try str.add(char);
+                if (str.items.len < 2) {
+                    try str.append(char);
                 } else {
-                    try str.set(char, 1);
+                    str.items[1] = char;
                 }
             }
         }
 
-        if (str.len() == 1) {
-            try str.add(try str.at(0));
+        if (str.items.len == 1) {
+            try str.append(str.items[0]);
         }
 
-        sum += try str.parseInt();
+        sum += try std.fmt.parseInt(i32, str.items, 10);
     }
 
     std.debug.print("{}", .{sum});
