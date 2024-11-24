@@ -5,8 +5,9 @@ const Context = @This();
 
 ally: std.mem.Allocator,
 lines: std.ArrayList(std.ArrayList(u8)),
-contents: std.ArrayList(u8),
 linesAsInts: std.ArrayList(std.ArrayList(i32)),
+linesAsSingleInts: std.ArrayList(i32),
+contents: std.ArrayList(u8),
 contentsAsInts: std.ArrayList(i32),
 
 pub fn init(puzzle: []const u8, ally: std.mem.Allocator) !Context {
@@ -28,18 +29,24 @@ pub fn init(puzzle: []const u8, ally: std.mem.Allocator) !Context {
         try lines.append(line);
     }
 
-    var contents = std.ArrayList(u8).init(ally);
-    for (lines.items) |line| {
-        try contents.appendSlice(line.items);
-    }
-
     var linesAsInts = std.ArrayList(std.ArrayList(i32)).init(ally);
     for (lines.items) |line| {
         var lineAsInt = std.ArrayList(i32).init(ally);
         for (line.items) |char| {
-            try lineAsInt.append(@intCast(char - '0'));
+            try lineAsInt.append(@as(i32, @intCast(char)) - '0');
         }
         try linesAsInts.append(lineAsInt);
+    }
+
+    var linesAsSingleInts = std.ArrayList(i32).init(ally);
+    for (lines.items) |line| {
+        const lineAsSingleInt = std.fmt.parseInt(i32, line.items, 10) catch continue;
+        try linesAsSingleInts.append(lineAsSingleInt);
+    }
+
+    var contents = std.ArrayList(u8).init(ally);
+    for (lines.items) |line| {
+        try contents.appendSlice(line.items);
     }
 
     var contentsAsInts = std.ArrayList(i32).init(ally);
@@ -50,8 +57,9 @@ pub fn init(puzzle: []const u8, ally: std.mem.Allocator) !Context {
     return Context{
         .ally = ally,
         .lines = lines,
-        .contents = contents,
         .linesAsInts = linesAsInts,
+        .linesAsSingleInts = linesAsSingleInts,
+        .contents = contents,
         .contentsAsInts = contentsAsInts,
     };
 }
