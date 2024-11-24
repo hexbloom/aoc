@@ -1,33 +1,27 @@
 const std = @import("std");
+const Context = @import("../Context.zig");
+const String = @import("../String.zig");
 
-pub fn solve(input: std.fs.File.Reader, ally: std.mem.Allocator) !void {
-    var sum: u32 = 0;
+pub fn solve(ctx: Context) !void {
+    var sum: i32 = 0;
 
-    while (try input.readUntilDelimiterOrEofAlloc(ally, '\n', 256)) |line| {
-        var first_digit: ?u8 = null;
-        var last_digit: ?u8 = null;
+    for (try ctx.lines()) |line| {
+        var str = String.init(ctx.ally);
         for (line) |char| {
-            if (!std.ascii.isDigit(char)) {
-                continue;
-            }
-
-            if (first_digit == null) {
-                first_digit = char;
-            } else {
-                last_digit = char;
+            if (std.ascii.isDigit(char)) {
+                if (str.len() < 2) {
+                    try str.add(char);
+                } else {
+                    try str.set(char, 1);
+                }
             }
         }
 
-        if (first_digit == null) {
-            return error.InvalidInput;
+        if (str.len() == 1) {
+            try str.add(try str.at(0));
         }
 
-        if (last_digit == null) {
-            last_digit = first_digit;
-        }
-
-        var number_buffer: [2]u8 = .{ first_digit.?, last_digit.? };
-        sum += try std.fmt.parseInt(u32, number_buffer[0..], 10);
+        sum += try str.parseInt();
     }
 
     std.debug.print("{}", .{sum});

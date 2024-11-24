@@ -1,8 +1,11 @@
 const std = @import("std");
 
-pub fn build(b: *std.Build) void {
+pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
+
+    const options = b.addOptions();
+    options.addOption([]const u8, "input_root", try b.build_root.join(b.allocator, &.{"input"}));
 
     const exe = b.addExecutable(.{
         .name = "aoc",
@@ -10,6 +13,7 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+    exe.root_module.addOptions("cfg", options);
 
     b.installArtifact(exe);
 

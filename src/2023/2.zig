@@ -1,9 +1,11 @@
 const std = @import("std");
+const Context = @import("../Context.zig");
+const String = @import("../String.zig");
 
-pub fn solve(input: std.fs.File.Reader, ally: std.mem.Allocator) !void {
-    var sum: u32 = 0;
-    var game_id: u32 = 1;
-    while (try input.readUntilDelimiterOrEofAlloc(ally, '\n', 256)) |line| {
+pub fn solve(ctx: Context) !void {
+    var sum: i32 = 0;
+    var game_id: i32 = 1;
+    for (try ctx.lines()) |line| {
         var game_is_valid = true;
 
         var color_count_it = std.mem.tokenizeAny(u8, line, ":,;");
