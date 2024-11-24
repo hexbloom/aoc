@@ -2,18 +2,18 @@ const std = @import("std");
 const Context = @import("../Context.zig");
 
 pub fn solve(ctx: Context) !void {
-    var sum: u32 = 0;
-    for (try ctx.lines()) |line| {
-        var color_count_it = std.mem.tokenizeAny(u8, line, ":,;");
+    var res: u32 = 0;
+    for (ctx.lines.items) |line| {
+        var color_count_it = std.mem.tokenizeAny(u8, line.items, ":,;");
         _ = color_count_it.next();
 
         var max_red: u32 = 0;
         var max_green: u32 = 0;
         var max_blue: u32 = 0;
         while (color_count_it.next()) |color_count| {
-            var color_count_elem_it = std.mem.tokenizeScalar(u8, color_count, ' ');
-            const count = color_count_elem_it.next() orelse return error.InvalidInput;
-            const color = color_count_elem_it.next() orelse return error.InvalidInput;
+            var elem_it = std.mem.tokenizeScalar(u8, color_count, ' ');
+            const count = elem_it.next() orelse return error.InvalidInput;
+            const color = elem_it.next() orelse return error.InvalidInput;
 
             const parsed_count = try std.fmt.parseInt(u32, count, 10);
             if (std.mem.eql(u8, color, "red")) {
@@ -27,8 +27,8 @@ pub fn solve(ctx: Context) !void {
             }
         }
 
-        sum += max_red * max_green * max_blue;
+        res += max_red * max_green * max_blue;
     }
 
-    std.debug.print("{}", .{sum});
+    std.debug.print("{}", .{res});
 }

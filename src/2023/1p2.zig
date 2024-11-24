@@ -3,12 +3,12 @@ const Context = @import("../Context.zig");
 const String = std.ArrayList(u8);
 
 pub fn solve(ctx: Context) !void {
-    var sum: i32 = 0;
+    var res: i32 = 0;
 
-    for (try ctx.lines()) |line| {
+    for (ctx.lines.items) |line| {
         var str = String.init(ctx.ally);
-        for (0..line.len) |i| {
-            if (getDigit(line, i)) |char| {
+        for (0..line.items.len) |i| {
+            if (getDigit(line.items, i)) |char| {
                 if (str.items.len < 2) {
                     try str.append(char);
                 } else {
@@ -21,10 +21,10 @@ pub fn solve(ctx: Context) !void {
             try str.append(str.items[0]);
         }
 
-        sum += try std.fmt.parseInt(i32, str.items, 10);
+        res += try std.fmt.parseInt(i32, str.items, 10);
     }
 
-    std.debug.print("{}", .{sum});
+    std.debug.print("{}", .{res});
 }
 
 fn getDigit(line: []const u8, char_index: usize) ?u8 {

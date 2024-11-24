@@ -2,18 +2,18 @@ const std = @import("std");
 const Context = @import("../Context.zig");
 
 pub fn solve(ctx: Context) !void {
-    var sum: i32 = 0;
-    var game_id: i32 = 1;
-    for (try ctx.lines()) |line| {
-        var game_is_valid = true;
+    var res: i32 = 0;
+    var id: i32 = 1;
+    for (ctx.lines.items) |line| {
+        var valid = true;
 
-        var color_count_it = std.mem.tokenizeAny(u8, line, ":,;");
+        var color_count_it = std.mem.tokenizeAny(u8, line.items, ":,;");
         _ = color_count_it.next();
 
         while (color_count_it.next()) |color_count| {
-            var color_count_elem_it = std.mem.tokenizeScalar(u8, color_count, ' ');
-            const count = color_count_elem_it.next() orelse return error.InvalidInput;
-            const color = color_count_elem_it.next() orelse return error.InvalidInput;
+            var elem_it = std.mem.tokenizeScalar(u8, color_count, ' ');
+            const count = elem_it.next() orelse return error.InvalidInput;
+            const color = elem_it.next() orelse return error.InvalidInput;
 
             const max_count: u32 = blk: {
                 if (std.mem.eql(u8, color, "red")) {
@@ -28,17 +28,17 @@ pub fn solve(ctx: Context) !void {
             };
 
             if (try std.fmt.parseInt(u32, count, 10) > max_count) {
-                game_is_valid = false;
+                valid = false;
                 break;
             }
         }
 
-        if (game_is_valid) {
-            sum += game_id;
+        if (valid) {
+            res += id;
         }
 
-        game_id += 1;
+        id += 1;
     }
 
-    std.debug.print("{}", .{sum});
+    std.debug.print("{}", .{res});
 }

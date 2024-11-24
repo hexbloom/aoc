@@ -3,11 +3,11 @@ const Context = @import("../Context.zig");
 const String = std.ArrayList(u8);
 
 pub fn solve(ctx: Context) !void {
-    var sum: i32 = 0;
+    var res: i32 = 0;
 
-    for (try ctx.lines()) |line| {
+    for (ctx.lines.items) |line| {
         var str = String.init(ctx.ally);
-        for (line) |char| {
+        for (line.items) |char| {
             if (std.ascii.isDigit(char)) {
                 if (str.items.len < 2) {
                     try str.append(char);
@@ -21,8 +21,8 @@ pub fn solve(ctx: Context) !void {
             try str.append(str.items[0]);
         }
 
-        sum += try std.fmt.parseInt(i32, str.items, 10);
+        res += try std.fmt.parseInt(i32, str.items, 10);
     }
 
-    std.debug.print("{}", .{sum});
+    std.debug.print("{}", .{res});
 }
