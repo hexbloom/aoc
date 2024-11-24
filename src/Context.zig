@@ -5,6 +5,9 @@ const Context = @This();
 
 ally: std.mem.Allocator,
 lines: std.ArrayList(std.ArrayList(u8)),
+contents: std.ArrayList(u8),
+linesAsInts: std.ArrayList(std.ArrayList(i32)),
+contentsAsInts: std.ArrayList(i32),
 
 pub fn init(puzzle: []const u8, ally: std.mem.Allocator) !Context {
     var it = std.mem.tokenizeScalar(u8, puzzle, '-');
@@ -25,8 +28,30 @@ pub fn init(puzzle: []const u8, ally: std.mem.Allocator) !Context {
         try lines.append(line);
     }
 
+    var contents = std.ArrayList(u8).init(ally);
+    for (lines.items) |line| {
+        try contents.appendSlice(line.items);
+    }
+
+    var linesAsInts = std.ArrayList(std.ArrayList(i32)).init(ally);
+    for (lines.items) |line| {
+        var lineAsInt = std.ArrayList(i32).init(ally);
+        for (line.items) |char| {
+            try lineAsInt.append(@intCast(char - '0'));
+        }
+        try linesAsInts.append(lineAsInt);
+    }
+
+    var contentsAsInts = std.ArrayList(i32).init(ally);
+    for (linesAsInts.items) |lineAsInts| {
+        try contentsAsInts.appendSlice(lineAsInts.items);
+    }
+
     return Context{
         .ally = ally,
         .lines = lines,
+        .contents = contents,
+        .linesAsInts = linesAsInts,
+        .contentsAsInts = contentsAsInts,
     };
 }
