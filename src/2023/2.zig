@@ -4,10 +4,10 @@ const Context = @import("../Context.zig");
 pub fn solve(ctx: Context) !void {
     var res: i32 = 0;
     var id: i32 = 1;
-    for (ctx.lines.items) |line| {
+    for (ctx.lines) |line| {
         var valid = true;
 
-        var color_count_it = std.mem.tokenizeAny(u8, line.items, ":,;");
+        var color_count_it = std.mem.tokenizeAny(u8, line, ":,;");
         _ = color_count_it.next();
 
         while (color_count_it.next()) |color_count| {

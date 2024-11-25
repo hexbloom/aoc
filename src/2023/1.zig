@@ -5,9 +5,9 @@ const String = std.ArrayList(u8);
 pub fn solve(ctx: Context) !void {
     var res: i32 = 0;
 
-    for (ctx.lines.items) |line| {
+    for (ctx.lines) |line| {
         var str = String.init(ctx.ally);
-        for (line.items) |char| {
+        for (line) |char| {
             if (std.ascii.isDigit(char)) {
                 if (str.items.len < 2) {
                     try str.append(char);

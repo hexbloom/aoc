@@ -3,8 +3,8 @@ const Context = @import("../Context.zig");
 
 pub fn solve(ctx: Context) !void {
     var res: u32 = 0;
-    for (ctx.lines.items) |line| {
-        var color_count_it = std.mem.tokenizeAny(u8, line.items, ":,;");
+    for (ctx.lines) |line| {
+        var color_count_it = std.mem.tokenizeAny(u8, line, ":,;");
         _ = color_count_it.next();
 
         var max_red: u32 = 0;

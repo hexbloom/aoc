@@ -5,10 +5,10 @@ const String = std.ArrayList(u8);
 pub fn solve(ctx: Context) !void {
     var res: i32 = 0;
 
-    for (ctx.lines.items) |line| {
+    for (ctx.lines) |line| {
         var str = String.init(ctx.ally);
-        for (0..line.items.len) |i| {
-            if (getDigit(line.items, i)) |char| {
+        for (0..line.len) |i| {
+            if (getDigit(line, i)) |char| {
                 if (str.items.len < 2) {
                     try str.append(char);
                 } else {
