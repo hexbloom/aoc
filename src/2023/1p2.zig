@@ -1,12 +1,11 @@
 const std = @import("std");
 const Context = @import("../Context.zig");
-const String = std.ArrayList(u8);
 
 pub fn solve(ctx: Context) !void {
     var res: i32 = 0;
 
     for (ctx.lines) |line| {
-        var str = String.init(ctx.ally);
+        var str = std.ArrayList(u8).init(ctx.ally);
         for (0..line.len) |i| {
             if (getDigit(line, i)) |char| {
                 if (str.items.len < 2) {

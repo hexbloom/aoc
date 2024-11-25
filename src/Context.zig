@@ -31,11 +31,11 @@ pub fn init(puzzle: []const u8, ally: std.mem.Allocator) !Context {
 
     var linesAsInts = std.ArrayList([]const i32).init(ally);
     for (lines.items) |line| {
-        var lineAsInt = std.ArrayList(i32).init(ally);
+        var lineAsInts = std.ArrayList(i32).init(ally);
         for (line) |char| {
-            try lineAsInt.append(@as(i32, @intCast(char)) - '0');
+            try lineAsInts.append(@as(i32, @intCast(char)) - '0');
         }
-        try linesAsInts.append(try lineAsInt.toOwnedSlice());
+        try linesAsInts.append(try lineAsInts.toOwnedSlice());
     }
 
     var linesAsSingleInts = std.ArrayList(i32).init(ally);

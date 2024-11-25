@@ -7,6 +7,7 @@ pub const puzzles = struct {
     pub const @"2023-2" = @import("2023/2.zig");
     pub const @"2023-2-2" = @import("2023/2p2.zig");
     pub const @"2023-3" = @import("2023/3.zig");
+    pub const @"2023-3-2" = @import("2023/3p2.zig");
 };
 
 pub fn main() !void {
