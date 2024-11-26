@@ -13,7 +13,7 @@ pub fn solve(ctx: Context) !void {
             const start = @intFromPtr(num.ptr) - @intFromPtr(line.ptr);
             for (0..num.len) |i| {
                 const x = start + i;
-                for (try Grid.getAdjacentCells(ctx, x, y, &Grid.adj_all)) |cell| {
+                for (try Grid.getAdjCells(ctx.ally, ctx.lines, x, y, &Grid.adj_all)) |cell| {
                     const char = ctx.lines[cell.y][cell.x];
                     if (char == '*') {
                         gear_cell = cell;
