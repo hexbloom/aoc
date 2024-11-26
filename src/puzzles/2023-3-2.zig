@@ -1,19 +1,20 @@
 const std = @import("std");
-const Context = @import("../Context.zig");
-const Grid = @import("../Grid.zig");
+const utils = @import("utils");
+const grid = utils.grid;
+const Context = utils.Context;
 
 pub fn solve(ctx: Context) !void {
     var res: i32 = 0;
 
-    var map = std.AutoHashMap(Grid.Cell, std.ArrayList(i32)).init(ctx.ally);
+    var map = std.AutoHashMap(grid.Cell, std.ArrayList(i32)).init(ctx.ally);
     for (ctx.lines, 0..) |line, y| {
         var it = std.mem.tokenizeAny(u8, line, "!@#$%^&*()-=_+/.");
         while (it.next()) |num| {
-            var gear_cell: ?Grid.Cell = null;
+            var gear_cell: ?grid.Cell = null;
             const start = @intFromPtr(num.ptr) - @intFromPtr(line.ptr);
             for (0..num.len) |i| {
                 const x = start + i;
-                for (try Grid.getAdjCells(ctx.ally, ctx.lines, x, y, &Grid.adj_all)) |cell| {
+                for (try grid.getAdjCells(ctx.ally, ctx.lines, x, y, &grid.adj_all)) |cell| {
                     const char = ctx.lines[cell.y][cell.x];
                     if (char == '*') {
                         gear_cell = cell;

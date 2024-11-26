@@ -1,5 +1,6 @@
 const std = @import("std");
-const Context = @import("../Context.zig");
+const utils = @import("utils");
+const Context = utils.Context;
 
 pub fn solve(ctx: Context) !void {
     var res: u32 = 0;
