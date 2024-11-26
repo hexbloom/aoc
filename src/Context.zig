@@ -63,34 +63,3 @@ pub fn init(puzzle: []const u8, ally: std.mem.Allocator) !Context {
         .contentsAsInts = try contentsAsInts.toOwnedSlice(),
     };
 }
-
-pub const Cell = struct {
-    x: usize,
-    y: usize,
-};
-
-pub fn getAdjacentCells(ctx: Context, x: usize, y: usize) ![]Cell {
-    var cells = std.ArrayList(Cell).init(ctx.ally);
-
-    const offsets = [_]i32{
-        -1, -1,
-        0,  -1,
-        1,  -1,
-        -1, 0,
-        1,  0,
-        -1, 1,
-        0,  1,
-        1,  1,
-    };
-    for (0..offsets.len / 2) |i| {
-        const x_pos = @as(i32, @intCast(x)) + offsets[i * 2];
-        const y_pos = @as(i32, @intCast(y)) + offsets[i * 2 + 1];
-        if (x_pos < 0 or x_pos >= ctx.lines[0].len or y_pos < 0 or y_pos >= ctx.lines.len) {
-            continue;
-        }
-
-        try cells.append(Cell{ .x = @intCast(x_pos), .y = @intCast(y_pos) });
-    }
-
-    return try cells.toOwnedSlice();
-}

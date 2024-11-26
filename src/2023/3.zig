@@ -1,5 +1,6 @@
 const std = @import("std");
 const Context = @import("../Context.zig");
+const Grid = @import("../Grid.zig");
 
 pub fn solve(ctx: Context) !void {
     var res: i32 = 0;
@@ -11,7 +12,7 @@ pub fn solve(ctx: Context) !void {
             const start = @intFromPtr(num.ptr) - @intFromPtr(line.ptr);
             for (0..num.len) |i| {
                 const x = start + i;
-                for (try ctx.getAdjacentCells(x, y)) |cell| {
+                for (try Grid.getAdjacentCells(ctx, x, y, &Grid.adj_all)) |cell| {
                     const char = ctx.lines[cell.y][cell.x];
                     if (!std.ascii.isDigit(char) and char != '.') {
                         is_valid = true;
