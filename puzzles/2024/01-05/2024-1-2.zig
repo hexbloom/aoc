@@ -18,13 +18,9 @@ pub fn solve(ctx: Context) !void {
 
     for (left.items) |l| {
         var count: i64 = 0;
-        while (true) {
-            if (std.mem.indexOfScalar(i64, right.items, l)) |index| {
-                _ = right.swapRemove(index);
-                count += 1;
-            } else {
-                break;
-            }
+        while (std.mem.indexOfScalar(i64, right.items, l)) |index| {
+            _ = right.swapRemove(index);
+            count += 1;
         }
         res += count * l;
     }
