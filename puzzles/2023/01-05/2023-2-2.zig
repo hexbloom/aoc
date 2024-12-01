@@ -1,10 +1,15 @@
+const puzzle = @import("puzzle");
 const std = @import("std");
 const utils = @import("utils");
-const Context = utils.Context;
 
-pub fn solve(ctx: Context) !void {
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+const ally = gpa.allocator();
+
+pub fn main() !void {
+    const lines = try utils.readLines(ally, puzzle.input_path);
+
     var res: u32 = 0;
-    for (ctx.lines) |line| {
+    for (lines) |line| {
         var color_count_it = std.mem.tokenizeAny(u8, line, ":,;");
         _ = color_count_it.next();
 

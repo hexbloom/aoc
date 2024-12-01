@@ -1,5 +1,4 @@
 const std = @import("std");
-const Context = @import("Context.zig");
 
 pub const Cell = struct {
     x: usize,

@@ -1,12 +1,17 @@
+const puzzle = @import("puzzle");
 const std = @import("std");
 const utils = @import("utils");
-const Context = utils.Context;
 
-pub fn solve(ctx: Context) !void {
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+const ally = gpa.allocator();
+
+pub fn main() !void {
+    const lines = try utils.readLines(ally, puzzle.input_path);
+
     var res: i32 = 0;
 
-    for (ctx.lines) |line| {
-        var str = std.ArrayList(u8).init(ctx.ally);
+    for (lines) |line| {
+        var str = std.ArrayList(u8).init(ally);
         for (line) |char| {
             if (std.ascii.isDigit(char)) {
                 if (str.items.len < 2) {

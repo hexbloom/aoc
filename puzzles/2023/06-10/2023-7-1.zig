@@ -1,7 +1,9 @@
+const puzzle = @import("puzzle");
 const std = @import("std");
 const utils = @import("utils");
-const grid = utils.grid;
-const Context = utils.Context;
+
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+const ally = gpa.allocator();
 
 const HandType = enum { one, two, twotwo, three, full, four, five };
 
@@ -9,9 +11,9 @@ const Hand = struct {
     cards: []const u8,
     bid: i64,
 
-    pub fn lessThan(self: Hand, other: Hand, ally: std.mem.Allocator) bool {
-        const self_hand = self.getHandType(ally);
-        const other_hand = other.getHandType(ally);
+    pub fn lessThan(self: Hand, other: Hand) bool {
+        const self_hand = self.getHandType();
+        const other_hand = other.getHandType();
 
         if (@intFromEnum(self_hand) != @intFromEnum(other_hand)) {
             return @intFromEnum(self_hand) < @intFromEnum(other_hand);
@@ -41,7 +43,7 @@ const Hand = struct {
         }
     }
 
-    fn getHandType(hand: Hand, ally: std.mem.Allocator) HandType {
+    fn getHandType(hand: Hand) HandType {
         var map = std.AutoHashMap(u8, i64).init(ally);
         for (hand.cards) |c| {
             const entry = map.getOrPutValue(c, 0) catch unreachable;
@@ -87,19 +89,21 @@ const Hand = struct {
     }
 };
 
-pub fn solve(ctx: Context) !void {
+pub fn main() !void {
+    const lines = try utils.readLines(ally, puzzle.input_path);
+
     var res: i64 = 0;
 
-    var hands = std.ArrayList(Hand).init(ctx.ally);
-    for (ctx.lines) |line| {
-        const split = try utils.split(ctx.ally, line, " ");
+    var hands = std.ArrayList(Hand).init(ally);
+    for (lines) |line| {
+        const split = try utils.split(ally, line, " ");
         try hands.append(.{
             .cards = split[0],
             .bid = try std.fmt.parseInt(i64, split[1], 10),
         });
     }
 
-    std.sort.pdq(Hand, hands.items, ctx, sortHand);
+    std.sort.pdq(Hand, hands.items, {}, sortHand);
 
     for (hands.items, 0..) |hand, i| {
         res += hand.bid * @as(i32, @intCast(i + 1));
@@ -108,6 +112,6 @@ pub fn solve(ctx: Context) !void {
     std.debug.print("{}", .{res});
 }
 
-fn sortHand(ctx: Context, a: Hand, b: Hand) bool {
-    return a.lessThan(b, ctx.ally);
+fn sortHand(_: void, a: Hand, b: Hand) bool {
+    return a.lessThan(b);
 }

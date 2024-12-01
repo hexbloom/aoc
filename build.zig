@@ -17,17 +17,11 @@ pub fn build(b: *std.Build) !void {
         const puzzle_id = std.fs.path.stem(entry.basename);
         const exe = b.addExecutable(.{
             .name = puzzle_id,
-            .root_source_file = b.path("src/main.zig"),
+            .root_source_file = b.path(b.pathJoin(&.{ "puzzles", entry.path })),
             .target = target,
             .optimize = optimize,
         });
         b.installArtifact(exe);
-        exe.root_module.addAnonymousImport("puzzle", .{
-            .root_source_file = b.path(b.pathJoin(&.{ "puzzles", entry.path })),
-            .imports = &.{
-                .{ .name = "utils", .module = utils },
-            },
-        });
         exe.root_module.addImport("utils", utils);
 
         var puzzle_id_it = std.mem.tokenizeScalar(u8, puzzle_id, '-');
@@ -35,9 +29,9 @@ pub fn build(b: *std.Build) !void {
         const day = puzzle_id_it.next().?;
         const input_path = b.pathFromRoot(b.pathJoin(&.{ "input", year, day, "input.txt" }));
 
-        const cfg = b.addOptions();
-        cfg.addOption([]const u8, "input_path", input_path);
-        exe.root_module.addOptions("cfg", cfg);
+        const puzzle_cfg = b.addOptions();
+        puzzle_cfg.addOption([]const u8, "input_path", input_path);
+        exe.root_module.addOptions("puzzle", puzzle_cfg);
 
         const run_cmd = b.addRunArtifact(exe);
         run_cmd.step.dependOn(&exe.step);

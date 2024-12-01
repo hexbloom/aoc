@@ -1,7 +1,9 @@
+const puzzle = @import("puzzle");
 const std = @import("std");
 const utils = @import("utils");
-const grid = utils.grid;
-const Context = utils.Context;
+
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+const ally = gpa.allocator();
 
 const MapValue = struct {
     left: []const u8,
@@ -13,14 +15,16 @@ const MapGhost = struct {
     found_end: bool,
 };
 
-pub fn solve(ctx: Context) !void {
-    var map = std.StringHashMap(MapValue).init(ctx.ally);
-    for (ctx.lines[2..]) |line| {
-        const split = try utils.split(ctx.ally, line, " =(,)");
+pub fn main() !void {
+    const lines = try utils.readLines(ally, puzzle.input_path);
+
+    var map = std.StringHashMap(MapValue).init(ally);
+    for (lines[2..]) |line| {
+        const split = try utils.split(ally, line, " =(,)");
         try map.put(split[0], .{ .left = split[1], .right = split[2] });
     }
 
-    var ghosts = std.ArrayList(MapGhost).init(ctx.ally);
+    var ghosts = std.ArrayList(MapGhost).init(ally);
     var map_it = map.keyIterator();
     while (map_it.next()) |key| {
         if (std.mem.endsWith(u8, key.*, "A")) {
@@ -33,7 +37,7 @@ pub fn solve(ctx: Context) !void {
     }
 
     var i: usize = 0;
-    while (true) : (i = (i + 1) % ctx.lines[0].len) {
+    while (true) : (i = (i + 1) % lines[0].len) {
         var all_at_end = true;
         for (ghosts.items) |*ghost| {
             if (ghost.found_end) {
@@ -43,7 +47,7 @@ pub fn solve(ctx: Context) !void {
 
             ghost.steps += 1;
             const loc_val = map.get(ghost.loc).?;
-            if (ctx.lines[0][i] == 'L') {
+            if (lines[0][i] == 'L') {
                 ghost.loc = loc_val.left;
             } else {
                 ghost.loc = loc_val.right;

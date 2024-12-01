@@ -1,20 +1,24 @@
+const puzzle = @import("puzzle");
 const std = @import("std");
 const utils = @import("utils");
-const grid = utils.grid;
-const Context = utils.Context;
 
-pub fn solve(ctx: Context) !void {
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+const ally = gpa.allocator();
+
+pub fn main() !void {
+    const lines = try utils.readLines(ally, puzzle.input_path);
+
     var res: i32 = 0;
 
-    var copies = try ctx.ally.alloc(i32, ctx.lines.len);
+    var copies = try ally.alloc(i32, lines.len);
     for (copies) |*c| {
         c.* = 0;
     }
 
-    for (ctx.lines, 0..) |line, line_idx| {
-        const split = try utils.split(ctx.ally, line, ":|");
-        const vals = try utils.split(ctx.ally, split[1], " ");
-        const checks = try utils.split(ctx.ally, split[2], " ");
+    for (lines, 0..) |line, line_idx| {
+        const split = try utils.split(ally, line, ":|");
+        const vals = try utils.split(ally, split[1], " ");
+        const checks = try utils.split(ally, split[2], " ");
 
         var num_matches: i32 = 0;
         for (checks) |c| {

@@ -1,26 +1,30 @@
+const puzzle = @import("puzzle");
 const std = @import("std");
 const utils = @import("utils");
-const grid = utils.grid;
-const Context = utils.Context;
+
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+const ally = gpa.allocator();
 
 const Range = struct { dst: usize, src: usize, len: usize };
 
-pub fn solve(ctx: Context) !void {
+pub fn main() !void {
+    const lines = try utils.readLines(ally, puzzle.input_path);
+
     var res: usize = std.math.maxInt(usize);
 
     const Map = std.ArrayList(Range);
-    var maps = std.ArrayList(Map).init(ctx.ally);
+    var maps = std.ArrayList(Map).init(ally);
     var map: *Map = undefined;
-    for (ctx.lines[1..]) |line| {
+    for (lines[1..]) |line| {
         if (line.len == 0) {
             map = try maps.addOne();
-            map.* = Map.init(ctx.ally);
+            map.* = Map.init(ally);
             continue;
         }
         if (line.len > 0 and !std.ascii.isDigit(line[0])) {
             continue;
         }
-        const vals = try utils.split(ctx.ally, line, " ");
+        const vals = try utils.split(ally, line, " ");
         try map.append(.{
             .dst = try std.fmt.parseInt(usize, vals[0], 10),
             .src = try std.fmt.parseInt(usize, vals[1], 10),
@@ -28,7 +32,7 @@ pub fn solve(ctx: Context) !void {
         });
     }
 
-    const seeds = try utils.split(ctx.ally, ctx.lines[0], " ");
+    const seeds = try utils.split(ally, lines[0], " ");
     var i: usize = 1;
     while (i < seeds.len) : (i += 2) {
         const seed_start = try std.fmt.parseInt(usize, seeds[i], 10);

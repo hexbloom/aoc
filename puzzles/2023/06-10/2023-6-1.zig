@@ -1,13 +1,17 @@
+const puzzle = @import("puzzle");
 const std = @import("std");
 const utils = @import("utils");
-const grid = utils.grid;
-const Context = utils.Context;
 
-pub fn solve(ctx: Context) !void {
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+const ally = gpa.allocator();
+
+pub fn main() !void {
+    const lines = try utils.readLines(ally, puzzle.input_path);
+
     var res: usize = 0;
 
-    const times = try utils.split(ctx.ally, ctx.lines[0], " ");
-    const distances = try utils.split(ctx.ally, ctx.lines[1], " ");
+    const times = try utils.split(ally, lines[0], " ");
+    const distances = try utils.split(ally, lines[1], " ");
 
     for (times[1..], distances[1..]) |time, distance| {
         const time_s = try std.fmt.parseInt(usize, time, 10);
