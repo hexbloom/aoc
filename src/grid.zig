@@ -39,15 +39,15 @@ pub fn distance(a: Cell, b: Cell) i32 {
     return @abs(x_dist) + @abs(y_dist);
 }
 
-pub const Iterator = struct {
+pub const Walker = struct {
     grid: [][]const u8,
     x: i32,
     y: i32,
     dir_x: i32,
     dir_y: i32,
 
-    pub fn init(grid: [][]const u8, x: i32, y: i32) Iterator {
-        return Iterator{
+    pub fn init(grid: [][]const u8, x: i32, y: i32) Walker {
+        return Walker{
             .grid = grid,
             .x = x,
             .y = y,
@@ -56,8 +56,8 @@ pub const Iterator = struct {
         };
     }
 
-    pub fn initDir(grid: [][]const u8, x: i32, y: i32, dir_x: i32, dir_y: i32) Iterator {
-        return Iterator{
+    pub fn initDir(grid: [][]const u8, x: i32, y: i32, dir_x: i32, dir_y: i32) Walker {
+        return Walker{
             .grid = grid,
             .x = x,
             .y = y,
@@ -66,19 +66,19 @@ pub const Iterator = struct {
         };
     }
 
-    pub fn move(it: *Iterator, dir_x: i32, dir_y: i32) ?u8 {
+    pub fn move(it: *Walker, dir_x: i32, dir_y: i32) ?u8 {
         it.x += dir_x;
         it.y += dir_y;
         return it.getValue();
     }
 
-    pub fn moveForward(it: *Iterator) ?u8 {
+    pub fn moveForward(it: *Walker) ?u8 {
         it.x += it.dir_x;
         it.y += it.dir_y;
         return it.getValue();
     }
 
-    pub fn getValue(it: Iterator) ?u8 {
+    pub fn getValue(it: Walker) ?u8 {
         if (isValidPos(it.grid, it.x, it.y)) {
             return it.grid[it.y][it.x];
         } else {
@@ -86,7 +86,7 @@ pub const Iterator = struct {
         }
     }
 
-    pub fn getCell(it: Iterator) ?Cell {
+    pub fn getCell(it: Walker) ?Cell {
         if (isValidPos(it.grid, it.x, it.y)) {
             return Cell{
                 .x = @intCast(it.x),
@@ -97,7 +97,7 @@ pub const Iterator = struct {
         }
     }
 
-    pub fn rotateR(it: *Iterator) void {
+    pub fn rotateR(it: *Walker) void {
         // 1, 0
         // 0, 1
         // -1, 0
@@ -107,7 +107,7 @@ pub const Iterator = struct {
         it.dir_y = tmp;
     }
 
-    pub fn rotateL(it: *Iterator) void {
+    pub fn rotateL(it: *Walker) void {
         // 1, 0
         // 0, -1
         // -1, 0
