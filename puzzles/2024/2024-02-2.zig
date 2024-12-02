@@ -14,12 +14,11 @@ pub fn main() !void {
         while (vals_it.next()) |val| {
             try val_list.append(try std.fmt.parseInt(isize, val, 10));
         }
-        const vals = val_list.items;
 
-        if (isListSafe(vals)) {
+        if (isListSafe(val_list.items)) {
             res += 1;
         } else {
-            for (0..vals.len) |i| {
+            for (0..val_list.items.len) |i| {
                 var val_list_cpy = try val_list.clone();
                 _ = val_list_cpy.orderedRemove(i);
                 if (isListSafe(val_list_cpy.items)) {

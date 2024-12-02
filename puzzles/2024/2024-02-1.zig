@@ -14,7 +14,7 @@ pub fn main() !void {
         while (vals_it.next()) |val| {
             try val_list.append(try std.fmt.parseInt(isize, val, 10));
         }
-        const vals = val_list.items;
+        const vals = try val_list.toOwnedSlice();
 
         var is_safe = true;
         const is_increasing = vals[1] > vals[0];
