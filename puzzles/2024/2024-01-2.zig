@@ -1,21 +1,19 @@
-const puzzle = @import("puzzle");
 const std = @import("std");
-const utils = @import("utils");
+const input = @embedFile("puzzle_input");
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 const ally = gpa.allocator();
 
 pub fn main() !void {
-    const lines = try utils.readLines(ally, puzzle.input_path);
-
     var res: i64 = 0;
 
     var left = std.ArrayList(i64).init(ally);
     var right = std.ArrayList(i64).init(ally);
-    for (lines) |line| {
-        const split = try utils.split(ally, line, " ");
-        try left.append(try std.fmt.parseInt(i64, split[0], 10));
-        try right.append(try std.fmt.parseInt(i64, split[1], 10));
+    var lines = std.mem.tokenizeAny(u8, input, "\n");
+    while (lines.next()) |line| {
+        var split = std.mem.tokenizeAny(u8, line, " ");
+        try left.append(try std.fmt.parseInt(i64, split.next().?, 10));
+        try right.append(try std.fmt.parseInt(i64, split.next().?, 10));
     }
 
     std.sort.pdq(i64, left.items, {}, std.sort.asc(i64));

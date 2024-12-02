@@ -1,16 +1,14 @@
-const puzzle = @import("puzzle");
 const std = @import("std");
-const utils = @import("utils");
+const input = @embedFile("puzzle_input");
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 const ally = gpa.allocator();
 
 pub fn main() !void {
-    const lines = try utils.readLines(ally, puzzle.input_path);
-
     var res: i32 = 0;
 
-    for (lines) |line| {
+    var lines = std.mem.tokenizeScalar(u8, input, '\n');
+    while (lines.next()) |line| {
         var str = std.ArrayList(u8).init(ally);
         for (0..line.len) |i| {
             if (getDigit(line, i)) |char| {

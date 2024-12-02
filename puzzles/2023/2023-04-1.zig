@@ -1,27 +1,28 @@
-const puzzle = @import("puzzle");
 const std = @import("std");
-const utils = @import("utils");
+const input = @embedFile("puzzle_input");
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 const ally = gpa.allocator();
 
 pub fn main() !void {
-    const lines = try utils.readLines(ally, puzzle.input_path);
-
     var res: i32 = 0;
 
-    for (lines) |line| {
-        const split = try utils.split(ally, line, ":|");
-        const vals = try utils.split(ally, split[1], " ");
-        const checks = try utils.split(ally, split[2], " ");
+    var lines = std.mem.tokenizeScalar(u8, input, '\n');
+    while (lines.next()) |line| {
+        var split = std.mem.tokenizeAny(u8, line, ":|");
+        _ = split.next();
+
+        var vals = std.mem.tokenizeScalar(u8, split.next().?, ' ');
+        var checks = std.mem.tokenizeScalar(u8, split.next().?, ' ');
 
         var num_matches: i32 = 0;
-        for (checks) |c| {
-            for (vals) |v| {
+        while (checks.next()) |c| {
+            while (vals.next()) |v| {
                 if (std.mem.eql(u8, c, v)) {
                     num_matches += 1;
                 }
             }
+            vals.reset();
         }
 
         if (num_matches > 0) {

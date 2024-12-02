@@ -1,21 +1,21 @@
-const puzzle = @import("puzzle");
 const std = @import("std");
-const utils = @import("utils");
+const input = @embedFile("puzzle_input");
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 const ally = gpa.allocator();
 
 pub fn main() !void {
-    const lines = try utils.readLines(ally, puzzle.input_path);
-
     var res: usize = 0;
 
-    const times = try utils.split(ally, lines[0], " ");
-    const distances = try utils.split(ally, lines[1], " ");
+    var lines = std.mem.tokenizeScalar(u8, input, '\n');
+    var times = std.mem.tokenizeScalar(u8, lines.next().?, ' ');
+    var distances = std.mem.tokenizeScalar(u8, lines.next().?, ' ');
 
-    for (times[1..], distances[1..]) |time, distance| {
-        const time_s = try std.fmt.parseInt(usize, time, 10);
-        const dist_s = try std.fmt.parseInt(usize, distance, 10);
+    _ = times.next();
+    _ = distances.next();
+    while (true) {
+        const time_s = try std.fmt.parseInt(usize, times.next() orelse break, 10);
+        const dist_s = try std.fmt.parseInt(usize, distances.next() orelse break, 10);
         var speed: usize = 1;
         var time_left: usize = time_s - speed;
         var num_wins: usize = 0;

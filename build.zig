@@ -4,10 +4,6 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const utils = b.addModule("utils", .{
-        .root_source_file = b.path("src/utils.zig"),
-    });
-
     var puzzles_dir = try b.build_root.handle.openDir("puzzles", .{ .iterate = true });
     var it = try puzzles_dir.walk(b.allocator);
     while (try it.next()) |entry| {
@@ -22,16 +18,13 @@ pub fn build(b: *std.Build) !void {
             .optimize = optimize,
         });
         b.installArtifact(exe);
-        exe.root_module.addImport("utils", utils);
 
         var puzzle_id_it = std.mem.tokenizeScalar(u8, puzzle_id, '-');
         const year = puzzle_id_it.next().?;
         const day = puzzle_id_it.next().?;
-        const input_path = b.pathFromRoot(b.pathJoin(&.{ "input", year, day, "input.txt" }));
-
-        const puzzle_cfg = b.addOptions();
-        puzzle_cfg.addOption([]const u8, "input_path", input_path);
-        exe.root_module.addOptions("puzzle", puzzle_cfg);
+        exe.root_module.addAnonymousImport("puzzle_input", .{
+            .root_source_file = b.path(b.pathJoin(&.{ "input", year, day, "input.txt" })),
+        });
 
         const run_cmd = b.addRunArtifact(exe);
         run_cmd.step.dependOn(&exe.step);

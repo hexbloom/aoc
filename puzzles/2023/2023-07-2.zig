@@ -1,6 +1,5 @@
-const puzzle = @import("puzzle");
 const std = @import("std");
-const utils = @import("utils");
+const input = @embedFile("puzzle_input");
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 const ally = gpa.allocator();
@@ -15,7 +14,7 @@ const Hand = struct {
         const self_hand = self.getHandType();
         const other_hand = other.getHandType();
 
-        if (@intFromEnum(self_hand) != @intFromEnum(other_hand)) {
+        if (self_hand != other_hand) {
             return @intFromEnum(self_hand) < @intFromEnum(other_hand);
         } else {
             for (self.cards, other.cards) |self_card, other_card| {
@@ -120,16 +119,15 @@ const Hand = struct {
 };
 
 pub fn main() !void {
-    const lines = try utils.readLines(ally, puzzle.input_path);
-
     var res: i64 = 0;
 
     var hands = std.ArrayList(Hand).init(ally);
-    for (lines) |line| {
-        const split = try utils.split(ally, line, " ");
+    var lines = std.mem.tokenizeScalar(u8, input, '\n');
+    while (lines.next()) |line| {
+        var split = std.mem.tokenizeScalar(u8, line, ' ');
         try hands.append(.{
-            .cards = split[0],
-            .bid = try std.fmt.parseInt(i64, split[1], 10),
+            .cards = split.next().?,
+            .bid = try std.fmt.parseInt(i64, split.next().?, 10),
         });
     }
 

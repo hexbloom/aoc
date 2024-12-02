@@ -1,6 +1,5 @@
-const puzzle = @import("puzzle");
 const std = @import("std");
-const utils = @import("utils");
+const input = @embedFile("puzzle_input");
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 const ally = gpa.allocator();
@@ -16,12 +15,12 @@ const MapGhost = struct {
 };
 
 pub fn main() !void {
-    const lines = try utils.readLines(ally, puzzle.input_path);
-
     var map = std.StringHashMap(MapValue).init(ally);
-    for (lines[2..]) |line| {
-        const split = try utils.split(ally, line, " =(,)");
-        try map.put(split[0], .{ .left = split[1], .right = split[2] });
+    var lines = std.mem.tokenizeScalar(u8, input, '\n');
+    const instructions = lines.next().?;
+    while (lines.next()) |line| {
+        var split = std.mem.tokenizeAny(u8, line, " =(,)");
+        try map.put(split.next().?, .{ .left = split.next().?, .right = split.next().? });
     }
 
     var ghosts = std.ArrayList(MapGhost).init(ally);
@@ -37,7 +36,7 @@ pub fn main() !void {
     }
 
     var i: usize = 0;
-    while (true) : (i = (i + 1) % lines[0].len) {
+    while (true) : (i = (i + 1) % instructions.len) {
         var all_at_end = true;
         for (ghosts.items) |*ghost| {
             if (ghost.found_end) {
@@ -47,7 +46,7 @@ pub fn main() !void {
 
             ghost.steps += 1;
             const loc_val = map.get(ghost.loc).?;
-            if (lines[0][i] == 'L') {
+            if (instructions[i] == 'L') {
                 ghost.loc = loc_val.left;
             } else {
                 ghost.loc = loc_val.right;

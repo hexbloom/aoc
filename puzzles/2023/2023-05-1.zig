@@ -1,6 +1,5 @@
-const puzzle = @import("puzzle");
 const std = @import("std");
-const utils = @import("utils");
+const input = @embedFile("puzzle_input");
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 const ally = gpa.allocator();
@@ -8,14 +7,18 @@ const ally = gpa.allocator();
 const Range = struct { dst: usize, src: usize, len: usize };
 
 pub fn main() !void {
-    const lines = try utils.readLines(ally, puzzle.input_path);
-
     var res: usize = std.math.maxInt(usize);
 
     const Map = std.ArrayList(Range);
     var maps = std.ArrayList(Map).init(ally);
     var map: *Map = undefined;
-    for (lines[1..]) |line| {
+
+    var lines = std.mem.splitScalar(u8, input, '\n');
+
+    var seeds = std.mem.tokenizeScalar(u8, lines.next().?, ' ');
+    _ = seeds.next();
+
+    while (lines.next()) |line| {
         if (line.len == 0) {
             map = try maps.addOne();
             map.* = Map.init(ally);
@@ -24,16 +27,15 @@ pub fn main() !void {
         if (line.len > 0 and !std.ascii.isDigit(line[0])) {
             continue;
         }
-        const vals = try utils.split(ally, line, " ");
+        var vals = std.mem.tokenizeScalar(u8, line, ' ');
         try map.append(.{
-            .dst = try std.fmt.parseInt(usize, vals[0], 10),
-            .src = try std.fmt.parseInt(usize, vals[1], 10),
-            .len = try std.fmt.parseInt(usize, vals[2], 10),
+            .dst = try std.fmt.parseInt(usize, vals.next().?, 10),
+            .src = try std.fmt.parseInt(usize, vals.next().?, 10),
+            .len = try std.fmt.parseInt(usize, vals.next().?, 10),
         });
     }
 
-    const seeds = try utils.split(ally, lines[0], " ");
-    for (seeds[1..]) |seed| {
+    while (seeds.next()) |seed| {
         const seed_val = try std.fmt.parseInt(usize, seed, 10);
 
         var map_val = seed_val;
