@@ -1,9 +1,6 @@
 const std = @import("std");
 const input = @embedFile("puzzle_input");
 
-var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-const ally = gpa.allocator();
-
 pub fn main() !void {
     var res: usize = 0;
 
