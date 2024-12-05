@@ -38,7 +38,7 @@ pub fn main() !void {
         }
         const pages = try pages_list.toOwnedSlice();
         if (!arePagesInOrder(pages, before_map)) {
-            sortPages(pages, before_map);
+            std.mem.sort(u32, pages, before_map, lessThanBeforeMap);
             res += pages[pages.len / 2];
         }
     }
@@ -49,38 +49,18 @@ pub fn main() !void {
 fn arePagesInOrder(pages: []const u32, before_map: BeforeMap) bool {
     for (pages, 0..) |before, i| {
         for (pages[i + 1 ..]) |after| {
-            if (before_map.get(before)) |before_list| {
-                if (std.mem.indexOfScalar(u32, before_list.items, after) != null) {
-                    continue;
-                }
+            if (!lessThanBeforeMap(before_map, before, after)) {
+                return false;
             }
-            return false;
         }
     }
 
     return true;
 }
 
-fn sortPages(pages: []u32, before_map: BeforeMap) void {
-    var i: usize = 0;
-    var j: usize = 1;
-    while (i < pages.len) : (j = i + 1) {
-        var in_order = true;
-        const before = pages[i];
-        while (j < pages.len) : (j += 1) {
-            const after = pages[j];
-            if (before_map.get(before)) |before_list| {
-                if (std.mem.indexOfScalar(u32, before_list.items, after) != null) {
-                    continue;
-                }
-            }
-            std.mem.swap(u32, &pages[i], &pages[j]);
-            in_order = false;
-            break;
-        }
-
-        if (in_order) {
-            i += 1;
-        }
+fn lessThanBeforeMap(before_map: BeforeMap, a: u32, b: u32) bool {
+    if (before_map.get(a)) |before_list| {
+        return std.mem.indexOfScalar(u32, before_list.items, b) != null;
     }
+    return false;
 }
