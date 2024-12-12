@@ -110,7 +110,7 @@ fn addSide(sides: *std.ArrayList(Side), cell: vec2, facing: Facing) !void {
 
         if (@reduce(.And, (side.start - dir) == cell)) {
             side.start = cell;
-            for (sides.items, 0..) |*merge_side, i| {
+            for (sides.items, 0..) |merge_side, i| {
                 if (merge_side.facing != facing) {
                     continue;
                 }
@@ -123,7 +123,7 @@ fn addSide(sides: *std.ArrayList(Side), cell: vec2, facing: Facing) !void {
         }
         if (@reduce(.And, (side.end + dir) == cell)) {
             side.end = cell;
-            for (sides.items, 0..) |*merge_side, i| {
+            for (sides.items, 0..) |merge_side, i| {
                 if (merge_side.facing != facing) {
                     continue;
                 }
